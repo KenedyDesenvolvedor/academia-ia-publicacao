@@ -462,7 +462,70 @@ modelo.compile(
  ]
 };
 
+
+const visited = JSON.parse(localStorage.getItem('academia-ia-visited')||'{}');
+let activeCourse = null, activeLesson = 0;
+const courseOrder = Object.keys(courseData);
+const el = id => document.getElementById(id);
+function saveVisited(){localStorage.setItem('academia-ia-visited',JSON.stringify(visited))}
+function loadVisited(){}
+function populateSwitch(){
+ const select=el('courseSwitch'); if(!select)return;
+ select.innerHTML='<option value="">Escolha um curso</option>'+courseOrder.map(k=>'<option value="'+k+'">'+courseData[k].title+'</option>').join('');
+ select.addEventListener('change',()=>{if(select.value)openCourse(select.value)});
+}
+function renderHome(){
+ const host=el('courseCards'); if(!host)return;
+ host.innerHTML=courseOrder.map((key,n)=>{const c=courseData[key];return '<article class="course-card"><div class="course-band"></div><div class="course-inner"><span class="course-kicker">CURSO '+String(n+1).padStart(2,'0')+'</span><h2>'+c.title+'</h2><p>'+c.subtitle+'</p><div class="topic-pills">'+(c.tags||[]).map(t=>'<span>'+t+'</span>').join('')+'</div><div class="course-card-foot"><small>'+c.lessons.length+' etapas de aprendizagem</small><button type="button" data-course="'+key+'">Acessar curso →</button></div></div></article>'}).join('');
+ host.querySelectorAll('[data-course]').forEach(b=>b.addEventListener('click',()=>openCourse(b.dataset.course)));
+}
+function showHome(){
+ const app=document.querySelector('.app'); app?.classList.add('home-mode');
+ el('home').hidden=false; el('courseArea').hidden=true; el('sidebar').hidden=true;
+ if(el('homeBtn'))el('homeBtn').hidden=true;
+}
+function updateProgress(){
+ const c=courseData[activeCourse], done=visited[activeCourse]||[];
+ const pct=Math.round(done.length/c.lessons.length*100);
+ el('progressText').textContent=pct+'%';el('progressBar').style.width=pct+'%';
+ el('progressDetail').textContent=done.length+' de '+c.lessons.length+' etapas concluídas';
+}
+function renderSidebar(){
+ const c=courseData[activeCourse];let html='',last='';
+ c.lessons.forEach((l,n)=>{if(l.group!==last){if(last)html+='</div>';last=l.group;html+='<div class="nav-group"><div class="nav-heading">'+last+'</div>'}
+ const done=(visited[activeCourse]||[]).includes(n);
+ html+='<button class="nav-link '+(n===activeLesson?'active ':'')+(done?'done':'')+'" data-lesson="'+n+'"><span class="nav-num">'+String(n+1).padStart(2,'0')+'</span><span>'+l.title+'</span></button>'});
+ if(last)html+='</div>';el('sidebarNav').innerHTML=html;
+ el('sidebarNav').querySelectorAll('[data-lesson]').forEach(b=>b.addEventListener('click',()=>showLesson(Number(b.dataset.lesson))));
+}
+function showLesson(n){
+ const c=courseData[activeCourse];activeLesson=Math.max(0,Math.min(n,c.lessons.length-1));
+ const l=c.lessons[activeLesson];visited[activeCourse]=visited[activeCourse]||[];
+ if(!visited[activeCourse].includes(activeLesson))visited[activeCourse].push(activeLesson);
+ saveVisited();el('crumbCourse').textContent=c.title;el('crumbLesson').textContent=l.title;
+ el('lessonMount').innerHTML='<div class="lesson-heading"><small>'+(l.group||'CURSO')+'</small><h1>'+l.title+'</h1>'+(l.lead?'<p>'+l.lead+'</p>':'')+'</div>'+(l.html||'')+(l.quiz?'<div class="callout"><b>Questionário</b><p>Revise as perguntas desta etapa e registre suas respostas.</p></div>':'');
+ const jump=el('jumpSelect');jump.innerHTML=c.lessons.map((x,i)=>'<option value="'+i+'" '+(i===activeLesson?'selected':'')+'>'+(i+1)+'. '+x.title+'</option>').join('');
+ el('prevBtn').disabled=activeLesson===0;el('nextBtn').textContent=activeLesson===c.lessons.length-1?'Concluir curso':'Continuar →';
+ el('navStatus').textContent=(activeLesson+1)+' / '+c.lessons.length;
+ renderSidebar();updateProgress();
+ el('reading').scrollTop=0;
+}
+function openCourse(key){
+ if(!courseData[key])return;activeCourse=key;activeLesson=0;
+ document.querySelector('.app')?.classList.remove('home-mode');
+ el('home').hidden=true;el('courseArea').hidden=false;el('sidebar').hidden=false;
+ el('sideLabel').textContent='TRILHA DE APRENDIZAGEM';
+ el('sideTitle').textContent=courseData[key].title;el('sideDesc').textContent=courseData[key].subtitle;
+ if(el('homeBtn'))el('homeBtn').hidden=false;
+ el('courseSwitch').value=key;showLesson(0);
+}
+el('homeBtn')?.addEventListener('click',()=>{activeCourse=null;showHome();});
+el('prevBtn')?.addEventListener('click',()=>showLesson(activeLesson-1));
+el('nextBtn')?.addEventListener('click',()=>showLesson(activeLesson+1));
+el('jumpSelect')?.addEventListener('change',e=>showLesson(Number(e.target.value)));
+el('menuToggle')?.addEventListener('click',()=>el('sidebar').classList.toggle('mobile-open'));
 loadVisited();populateSwitch();renderHome();showHome();
+
 </script>
 
 <script>
