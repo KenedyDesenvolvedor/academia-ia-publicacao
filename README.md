@@ -3,6 +3,9 @@
 Plataforma educacional com oito cursos completos em um único `index.html`, com navegação por módulos, atividades, questionários, glossário e progresso local. Inclui PWA instalável e cache offline.
 
 ## Cursos incluídos
+
+**Módulo Inteligência Artificial:** cursos 1, 2, 4, 5, 6, 7 e 8. **Módulo Internet das Coisas (IoT):** curso 3.
+
 1. Fundamentos de Inteligência Artificial
 2. Sistemas de Aprendizado de Máquina
 3. Plataformas de Middleware e Protocolos de Comunicação para IoT
