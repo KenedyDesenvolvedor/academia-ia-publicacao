@@ -1,0 +1,9 @@
+{
+  "name": "academia-ia",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Academia IA — plataforma educacional com cinco cursos e PWA",
+  "scripts": {"dev":"node server.mjs","start":"node server.mjs","check":"node --check server.mjs"},
+  "engines": {"node": ">=20"}
+}
