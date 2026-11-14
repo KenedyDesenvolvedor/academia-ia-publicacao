@@ -463,11 +463,11 @@ modelo.compile(
 };
 
 
-const visited = JSON.parse(localStorage.getItem('academia-ia-visited')||'{}');
+let visited = {}; try { visited = JSON.parse(localStorage.getItem('academia-ia-visited')||'{}') || {}; } catch(e) { visited = {}; }
 let activeCourse = null, activeLesson = 0;
 const courseOrder = Object.keys(courseData);
 const el = id => document.getElementById(id);
-function saveVisited(){localStorage.setItem('academia-ia-visited',JSON.stringify(visited))}
+function saveVisited(){try{localStorage.setItem('academia-ia-visited',JSON.stringify(visited))}catch(e){console.warn('Progresso não pôde ser salvo neste navegador.')}}
 function loadVisited(){}
 function populateSwitch(){
  const select=el('courseSwitch'); if(!select)return;
