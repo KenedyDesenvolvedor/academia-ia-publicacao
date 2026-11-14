@@ -1,0 +1,14 @@
+{
+  "id": "/",
+  "name": "Academia IA — Ambiente de Aprendizagem",
+  "short_name": "Academia IA",
+  "description": "Oito cursos de Inteligência Artificial, Machine Learning, IoT, Redes Neurais, Deep Learning, Visão Computacional, PLN e IA Generativa.",
+  "lang": "pt-BR",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f3f5f1",
+  "theme_color": "#203b3a",
+  "icons": [{"src":"/assets/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
